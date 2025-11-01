@@ -123,7 +123,7 @@ def create_video_from_images(images, output_video_path, fps=3):
     width, height = images[0].size
     
     # Create a VideoWriter object
-    fourcc = cv2.VideoWriter.fourcc(*'XVID')  # Codec
+    fourcc = cv2.VideoWriter.fourcc(*'mp4v')  # Codec
     video_writer = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
 
     for image in images:
@@ -141,16 +141,16 @@ if __name__ == "__main__":
 
     create_video_from_images(
         images,
-        "./example_video_3fps.avi",
+        "./example_video_3fps.mp4",
         fps=3,
     )
     create_video_from_images(
         images,
-        "./example_video_2fps.avi",
+        "./example_video_2fps.mp4",
         fps=2,
     )
     create_video_from_images(
         images,
-        "./example_video_1fps.avi",
+        "./example_video_1fps.mp4",
         fps=1,
     )
