@@ -1,7 +1,9 @@
+import cv2
 import numpy as np
-import torch
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import random
+import torch
+from tqdm import tqdm
 from transformers import (
     AutoProcessor,
     AutoModelForZeroShotObjectDetection,
@@ -100,4 +102,55 @@ def run_dino():
 
     # print(masks.shape)
 
-    apply_masks(image, masks, labels).show()
+    masked_image = apply_masks(image, masks, labels)
+    return masked_image
+
+
+def add_timestamp(image, timestamp, position=(10, 10), font_size=30, font_color=(255, 255, 255)):
+    # Convert the image to RGBA (if not already)
+    image = image.convert("RGBA")
+    draw = ImageDraw.Draw(image)
+    
+    # Load a font (change the font path to a valid one on your system)
+    font = ImageFont.truetype("arial.ttf", font_size)  # Change to your font path
+    draw.text(position, timestamp, font=font, fill=font_color)
+    
+    return image
+
+
+def create_video_from_images(images, output_video_path, fps=3):
+    # Get dimensions from the first image
+    width, height = images[0].size
+    
+    # Create a VideoWriter object
+    fourcc = cv2.VideoWriter.fourcc(*'XVID')  # Codec
+    video_writer = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
+    for image in images:
+        image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGBA2BGR)
+        video_writer.write(image_cv)
+    
+    # Release the video writer
+    video_writer.release()
+
+
+if __name__ == "__main__":
+    images = []
+    for i in tqdm(range(100)):
+        images.append(run_dino())
+
+    create_video_from_images(
+        images,
+        "./example_video_3fps.avi",
+        fps=3,
+    )
+    create_video_from_images(
+        images,
+        "./example_video_2fps.avi",
+        fps=2,
+    )
+    create_video_from_images(
+        images,
+        "./example_video_1fps.avi",
+        fps=1,
+    )
