@@ -528,7 +528,7 @@ wheels = [
 [[package]]
 name = "picamera2-client"
 version = "0.1.0"
-source = { git = "https://github.com/ntbangerter/picamera2_client#b48878bcbf72fea19a36de38d1e5a0a287aa5fb9" }
+source = { git = "https://github.com/ntbangerter/picamera2_client#63a812e2b630f73ae0ada93634b5c65ba38132eb" }
 dependencies = [
     { name = "numpy" },
     { name = "opencv-python" },

@@ -1,12 +1,11 @@
 from transformers import AutoProcessor, AutoModelForCausalLM  
-from PIL import Image
+from PIL import Image, ImageDraw
 import requests
 import copy
 import torch
-from PIL import ImageDraw
 import numpy as np
 
-from picamera2_client.client import mjpeg_stream_watcher
+from picamera2_client.client import mjpeg_stream_watcher, fetch_jpeg
 
 
 model_id = 'microsoft/Florence-2-large'
@@ -35,8 +34,10 @@ def run_example(image, task_prompt="<REFERRING_EXPRESSION_SEGMENTATION>", text_i
 
     return parsed_answer
 
+
 def classification(image):
     print(run_example(image, "<CAPTION>"))
+
 
 def mask(image, label="person"):
     # print(image.shape)
@@ -52,9 +53,24 @@ def mask(image, label="person"):
     img_mask.save("./test-mask.jpg")
     mask = np.array(img_mask)
     return mask, polygon
+
+
+def bikelane_detection(label="a car on the street"):
+    image = fetch_jpeg(high_res=False)
+    image = Image.fromarray(image[..., ::-1])
+    image.show()
+    response = run_example(image, text_input=label)
     
+    polygon = response['<REFERRING_EXPRESSION_SEGMENTATION>']['polygons'][0][0]
+
+    ImageDraw.Draw(image).polygon(polygon, outline="blue", fill="blue")
+    image.show()
+
     
-mjpeg_stream_watcher(
-    fn=mask,
-    imshow=True,
-)
+# bikelane_detection()
+
+
+# mjpeg_stream_watcher(
+#     fn=mask,
+#     imshow=True,
+# )
