@@ -55,7 +55,7 @@ def mask(image, label="person"):
     return mask, polygon
 
 
-def bikelane_detection(label="a car on the street"):
+def bikelane_detection(label="all of the cars on the street"):
     image = fetch_jpeg(high_res=False)
     image = Image.fromarray(image[..., ::-1])
     image.show()
@@ -66,6 +66,22 @@ def bikelane_detection(label="a car on the street"):
     ImageDraw.Draw(image).polygon(polygon, outline="blue", fill="blue")
     image.show()
 
+
+# multi-instance detection doesn't seem to work consistently
+def bikelane_bounding_boxes(label="car. bike. bus."):
+    image = fetch_jpeg(high_res=True)
+    image = Image.fromarray(image[..., ::-1])
+    image.show()
+    response = run_example(
+        image,
+        task_prompt="<CAPTION_TO_PHRASE_GROUNDING>",
+        # task_prompt="<OD>",
+        text_input=label,
+    )
+
+    return response
+
+# bikelane_bounding_boxes()
     
 # bikelane_detection()
 
